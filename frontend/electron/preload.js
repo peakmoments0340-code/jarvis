@@ -6,12 +6,16 @@ contextBridge.exposeInMainWorld('jarvisAPI', {
     const res = await axios.post('http://localhost:8000/chat', { message })
     return res.data
   },
-  run: async (command, args=[]) => {
+  run: async (command, args = []) => {
     const res = await axios.post('http://localhost:8000/run', { command, args })
     return res.data
   },
   speak: async (text) => {
     const res = await axios.post('http://localhost:8000/speak', { message: text })
+    return res.data
+  },
+  health: async () => {
+    const res = await axios.get('http://localhost:8000/health')
     return res.data
   }
 })

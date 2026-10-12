@@ -3,8 +3,11 @@ const path = require('path')
 
 function createWindow () {
   const win = new BrowserWindow({
-    width: 900,
-    height: 700,
+    width: 980,
+    height: 760,
+    minWidth: 760,
+    minHeight: 600,
+    backgroundColor: '#0f172a',
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
@@ -12,7 +15,7 @@ function createWindow () {
     }
   })
 
-  win.loadFile(path.join(__dirname, 'src', 'index.html'))
+  win.loadFile(path.join(__dirname, '..', 'src', 'index.html'))
 }
 
 app.whenReady().then(() => {

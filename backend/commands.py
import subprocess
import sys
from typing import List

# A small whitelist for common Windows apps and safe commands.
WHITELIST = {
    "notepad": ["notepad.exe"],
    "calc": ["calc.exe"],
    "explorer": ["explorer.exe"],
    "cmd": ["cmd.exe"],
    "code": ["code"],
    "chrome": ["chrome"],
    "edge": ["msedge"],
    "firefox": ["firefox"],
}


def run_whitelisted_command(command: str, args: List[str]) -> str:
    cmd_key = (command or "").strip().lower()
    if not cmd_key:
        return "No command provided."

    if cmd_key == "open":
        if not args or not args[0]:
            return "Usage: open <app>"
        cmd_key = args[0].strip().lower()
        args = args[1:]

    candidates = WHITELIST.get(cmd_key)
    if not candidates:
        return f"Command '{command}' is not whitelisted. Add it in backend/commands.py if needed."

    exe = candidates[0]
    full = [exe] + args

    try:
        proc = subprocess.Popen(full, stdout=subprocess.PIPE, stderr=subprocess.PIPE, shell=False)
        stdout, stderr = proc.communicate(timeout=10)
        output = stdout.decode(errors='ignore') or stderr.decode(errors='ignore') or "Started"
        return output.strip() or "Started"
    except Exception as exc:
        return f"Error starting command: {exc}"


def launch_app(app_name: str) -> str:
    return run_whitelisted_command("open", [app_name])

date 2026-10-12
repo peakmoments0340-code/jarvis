@@ -1,0 +1,66 @@
+import os
+import json
+from typing import Optional
+
+try:
+    from openai import OpenAI
+except Exception:
+    OpenAI = None
+
+try:
+    import requests
+except Exception:
+    requests = None
+
+
+class AIClient:
+    def __init__(self, api_key: Optional[str], model: str = "gpt-3.5-turbo", ollama_host: str = "http://localhost:11434", ollama_model: str = "llama3.1"):
+        self.model = model
+        self.api_key = api_key
+        self.ollama_host = ollama_host.rstrip("/")
+        self.ollama_model = ollama_model
+
+    def _ask_ollama(self, message: str) -> str:
+        if not requests:
+            return "Ollama support requires the requests package. Install backend requirements first."
+        url = f"{self.ollama_host}/api/generate"
+        payload = {
+            "model": self.ollama_model,
+            "prompt": message,
+            "stream": False,
+        }
+        try:
+            r = requests.post(url, json=payload, timeout=30)
+            r.raise_for_status()
+            data = r.json()
+            return data.get("response", "No response received from Ollama.")
+        except Exception as exc:
+            return f"Ollama request failed: {exc}"
+
+    def chat(self, message: str) -> str:
+        if self.api_key:
+            try:
+                if OpenAI is not None:
+                    client = OpenAI(api_key=self.api_key)
+                    resp = client.chat.completions.create(
+                        model=self.model,
+                        messages=[{"role": "user", "content": message}],
+                        temperature=0.7,
+                        max_tokens=512,
+                    )
+                    return resp.choices[0].message.content.strip()
+                import openai as legacy
+                legacy.api_key = self.api_key
+                resp = legacy.ChatCompletion.create(
+                    model=self.model,
+                    messages=[{"role": "user", "content": message}],
+                    temperature=0.7,
+                    max_tokens=512,
+                )
+                return resp.choices[0].message.content.strip()
+            except Exception as exc:
+                # Fall back to Ollama if OpenAI is unavailable or fails
+                return self._ask_ollama(message) if self.ollama_host else f"AI request failed: {exc}"
+
+        # If no API key, try Ollama
+        return self._ask_ollama(message)

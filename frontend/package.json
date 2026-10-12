@@ -4,12 +4,13 @@
   "description": "Electron frontend for Jarvis personal assistant",
   "main": "electron/main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "dev": "electron ."
   },
   "author": "peakmoments0340-code",
   "license": "MIT",
   "dependencies": {
-    "electron": "^26.0.0",
-    "axios": "^1.6.0"
+    "axios": "^1.7.2",
+    "electron": "^31.0.0"
   }
 }

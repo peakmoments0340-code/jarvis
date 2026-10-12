@@ -1,6 +1,7 @@
-openai
-fastapi
-uvicorn
+requests
 python-dotenv
+openai
+uvicorn
+fastapi
 pyttsx3
 pydantic
